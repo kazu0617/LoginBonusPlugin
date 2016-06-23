@@ -36,6 +36,7 @@ public class Main extends JavaPlugin {
 	public void onDisable() {}
 
 
+        @Override
 	public boolean onCommand(CommandSender s, Command cmd, String lav, String[] args) {
 		if(args.length >= 1) {
 			if((args.length == 1) && ("bonusfilecheck".equalsIgnoreCase(args[0]))) {
