@@ -6,6 +6,7 @@ import jp.kotmw.loginbonus.FileDatas.BonusItem;
 import jp.kotmw.loginbonus.FileDatas.PlayerDatas;
 import jp.kotmw.loginbonus.FileDatas.PluginFiles;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,8 +47,19 @@ public class Main extends JavaPlugin {
 			}
 			if(s instanceof Player) {
 				Player p = (Player)s;
-				if((args.length == 2) && ("getItem".equalsIgnoreCase(args[0]))) {
+				if((args.length == 2) && ("getitem".equalsIgnoreCase(args[0]))) {
 					p.getInventory().addItem(BonusItem.getBonusItem(Integer.valueOf(args[1])));
+				} else if((args.length >= 1) && ("addBonusItem".equalsIgnoreCase(args[0]))) {
+					if(p.getItemInHand() == null
+							|| p.getItemInHand().getType() == Material.AIR) {
+						p.sendMessage(PPrefix + "登録するアイテム持ってくださいね～");
+						return false;
+					}
+					if(args.length == 1) {
+						BonusItem.addBonusItem(p.getItemInHand());
+					} else if(args.length == 2) {
+						BonusItem.addBonusItem(p.getItemInHand(), args[1]);
+					}
 				}
 			}
 		}

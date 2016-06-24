@@ -17,13 +17,14 @@ public class Events implements Listener {
 		String uuid = p.getUniqueId().toString();
 		if(!PluginFiles.DirFile("Players", uuid).exists()) {
 			PlayerDatas.createPlayerFile(uuid, p.getName());
+			p.getInventory().addItem(BonusItem.getBonusItem(1));
 			return;
 		}
 		if(PlayerDatas.isToday(uuid))
 			return;
+		PlayerDatas.updatePlayerFile(uuid);
 		int i = PlayerDatas.getLoginCount(uuid);
 		p.getInventory().addItem(BonusItem.getBonusItem(i));
-		PlayerDatas.updatePlayerFile(uuid);
 	}
 
 }

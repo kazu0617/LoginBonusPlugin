@@ -2,6 +2,7 @@ package jp.kotmw.loginbonus.FileDatas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -71,6 +72,29 @@ public class BonusItem extends PluginFiles{
 					item.addUnsafeEnchantment(Enchantment.getByName(ench[0]), 1);
 			}
 		return item;
+	}
+
+	public static void addBonusItem(ItemStack item) {
+		addBonusItem(item, item.getItemMeta().getDisplayName());
+	}
+
+	public static void addBonusItem(ItemStack item, String name) {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(ConfigFile(filename));
+		int i = MaxBonusCount()+1;
+		file.set(i+".ItemType", item.getType().toString());
+		if(name != null)
+			file.set(i+".ItemName", name);
+		if(item.getItemMeta().hasLore()) {
+			file.set(i+".Lore", item.getItemMeta().getLore());
+		}
+		if(item.getItemMeta().hasEnchants()) {
+			Map<Enchantment,Integer> map = item.getEnchantments();
+			List<String> ench = new ArrayList<>();
+			for(Enchantment en : map.keySet())
+				ench.add(en.getName()+","+map.get(en));
+			file.set(i+".Enchantment", ench);
+		}
+		SettingFiles(file, ConfigFile(filename));
 	}
 
 	public static void filecheck(boolean replace) {
