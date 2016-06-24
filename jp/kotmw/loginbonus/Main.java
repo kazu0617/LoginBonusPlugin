@@ -4,12 +4,8 @@ import java.io.File;
 
 import jp.kotmw.loginbonus.FileDatas.BonusItem;
 import jp.kotmw.loginbonus.FileDatas.PlayerDatas;
-import jp.kotmw.loginbonus.FileDatas.PluginFiles;
+import jp.kotmw.loginbonus.command.LBCommand;
 
-import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -27,42 +23,10 @@ public class Main extends JavaPlugin {
 		this.reloadConfig();
 		if(!PlayerDatas.playerdatadir.exists())
 			PlayerDatas.playerdatadir.mkdir();
-		if(!PluginFiles.ConfigFile("LoginBonus").exists())
-			BonusItem.createBonusFile();
-		else
-			BonusItem.filecheck(true);
+		BonusItem.enablefile();
+		getCommand("loginbonus").setExecutor(new LBCommand());
 	}
 
 	@Override
 	public void onDisable() {}
-
-
-	public boolean onCommand(CommandSender s, Command cmd, String lav, String[] args) {
-		if(args.length >= 1) {
-			if((args.length == 1) && ("bonusfilecheck".equalsIgnoreCase(args[0]))) {
-				BonusItem.filecheck(false);
-				if(s instanceof Player) {
-					((Player)s).sendMessage(PPrefix + "サーバーログの方にチェック結果を出しました");
-				}
-			}
-			if(s instanceof Player) {
-				Player p = (Player)s;
-				if((args.length == 2) && ("getitem".equalsIgnoreCase(args[0]))) {
-					p.getInventory().addItem(BonusItem.getBonusItem(Integer.valueOf(args[1])));
-				} else if((args.length >= 1) && ("addBonusItem".equalsIgnoreCase(args[0]))) {
-					if(p.getItemInHand() == null
-							|| p.getItemInHand().getType() == Material.AIR) {
-						p.sendMessage(PPrefix + "登録するアイテム持ってくださいね～");
-						return false;
-					}
-					if(args.length == 1) {
-						BonusItem.addBonusItem(p.getItemInHand());
-					} else if(args.length == 2) {
-						BonusItem.addBonusItem(p.getItemInHand(), args[1]);
-					}
-				}
-			}
-		}
-		return false;
-	}
 }

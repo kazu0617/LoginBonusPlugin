@@ -133,6 +133,13 @@ public class BonusItem extends PluginFiles{
 		SettingFiles(file, ConfigFile(filename));
 	}
 
+	public static void enablefile() {
+		if(!PluginFiles.ConfigFile("LoginBonus").exists())
+			BonusItem.createBonusFile();
+		else
+			BonusItem.filecheck(true);
+	}
+
 	private static void ConsoleSendmessage(String text) {
 		Bukkit.getConsoleSender().sendMessage(text);
 	}
