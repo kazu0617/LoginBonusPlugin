@@ -59,7 +59,7 @@ public class BonusItem extends PluginFiles{
 		if(file.contains(i+".Lore")) {
 			List<String> l = new ArrayList<>();
 			for(String lore : file.getStringList(i+".Lore"))
-				l.add(ChatColor.translateAlternateColorCodes('&', lore));
+				l.add(ChatColor.translateAlternateColorCodes('&', lore).replace("#", ""));
 			meta.setLore(l);
 		}
 		item.setItemMeta(meta);
@@ -75,17 +75,31 @@ public class BonusItem extends PluginFiles{
 	}
 
 	public static void addBonusItem(ItemStack item) {
-		addBonusItem(item, item.getItemMeta().getDisplayName());
+		setBonusItem(item, item.getItemMeta().getDisplayName(), MaxBonusCount()+1);
 	}
 
 	public static void addBonusItem(ItemStack item, String name) {
+		setBonusItem(item, name, MaxBonusCount()+1);
+	}
+
+	public static void setBonusItem(ItemStack item, int day) {
+		setBonusItem(item, item.getItemMeta().getDisplayName(), day);
+	}
+
+	public static void setBonusItem(ItemStack item, String name, int day) {
 		FileConfiguration file = YamlConfiguration.loadConfiguration(ConfigFile(filename));
-		int i = MaxBonusCount()+1;
+		int i = day;
 		file.set(i+".ItemType", item.getType().toString());
 		if(name != null)
 			file.set(i+".ItemName", name);
 		if(item.getItemMeta().hasLore()) {
-			file.set(i+".Lore", item.getItemMeta().getLore());
+			List<String> lore = new ArrayList<>();
+			for(String l : item.getItemMeta().getLore()) {
+				if(l.split("&").length > 1)
+					l = l.split("&")[0].concat("&#")+l.split("&")[1];
+				lore.add(l.replace('§', '&'));
+			}
+			file.set(i+".Lore",lore);
 		}
 		if(item.getItemMeta().hasEnchants()) {
 			Map<Enchantment,Integer> map = item.getEnchantments();
