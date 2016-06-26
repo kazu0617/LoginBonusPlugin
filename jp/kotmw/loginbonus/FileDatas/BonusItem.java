@@ -57,10 +57,27 @@ public class BonusItem extends PluginFiles{
 			meta.setDisplayName(ChatColor.RESET
 					+ChatColor.translateAlternateColorCodes('&',file.getString(i+".ItemName")));
 		if(file.contains(i+".Lore")) {
-			List<String> l = new ArrayList<>();
-			for(String lore : file.getStringList(i+".Lore"))
-				l.add(ChatColor.translateAlternateColorCodes('&', lore).replace("#", ""));
-			meta.setLore(l);
+			List<String> lore = new ArrayList<>();
+			for(String l : file.getStringList(i+".Lore")) {
+				StringBuilder escaped = new StringBuilder();
+				char[] loreChars = new char[l.length()];
+				l.getChars(0, l.length(), loreChars, 0);
+				for(int i = 0; i < loreChars.length; i++) {
+					if(loreChars[i] == '&' && i < loreChars.length - 1) {
+						//最終ではない
+						if(loreChars[i + 1] == '&') {
+							escaped.append('&');
+							i++;
+						} else {
+							escaped.append("\uFEFF\u00A7");
+						}
+					} else {
+						escaped.append(loreChars[i]);
+					}
+				}
+				lore.add(escaped.toString());
+			}
+			meta.setLore(lore);
 		}
 		item.setItemMeta(meta);
 		if(file.contains(i+".Enchantment"))
@@ -95,9 +112,7 @@ public class BonusItem extends PluginFiles{
 		if(item.getItemMeta().hasLore()) {
 			List<String> lore = new ArrayList<>();
 			for(String l : item.getItemMeta().getLore()) {
-				if(l.split("&").length > 1)
-					l = l.split("&")[0].concat("&#")+l.split("&")[1];
-				lore.add(l.replace('§', '&'));
+				lore.add(l.replace("&", "&&").replace("\uFEFF\u00A7", "&"));
 			}
 			file.set(i+".Lore",lore);
 		}
